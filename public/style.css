@@ -1,0 +1,249 @@
+/* Modern Cinematic Theme for Sine Kultura */
+:root {
+    --primary-red: #e63946;
+    --dark-bg: #0b0b0b;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --text-light: #f1f1f1;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Glassmorphism Header */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid var(--glass-bg);
+}
+
+.logo {
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--primary-red);
+    font-size: 1.2rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 30px;
+}
+
+nav a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: var(--primary-red);
+}
+
+/* Hero Section with Dark Overlay */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-placeholder.jpg');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.hero button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: var(--primary-red);
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.hero button:hover {
+    transform: scale(1.05);
+}
+
+/* Portfolio Grid Improvements */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 50px 5%;
+}
+
+.item-placeholder {
+    background: #1a1a1a;
+    height: 350px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    border: 1px solid var(--glass-bg);
+    transition: border 0.3s;
+}
+
+.item-placeholder:hover {
+    border: 1px solid var(--primary-red);
+}
+
+/* Mobile-Friendly Adjustments */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    nav ul { display: none; } /* Consider adding a hamburger menu later */
+}
+
+/* Contact Section Styling */
+.contact-section {
+    padding: 100px 5%;
+    display: flex;
+    justify-content: center;
+    background: var(--dark-bg);
+}
+
+.form-container {
+    background: var(--glass-bg);
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.form-container h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--primary-red);
+}
+
+.form-container p {
+    margin-bottom: 30px;
+    color: #888;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group input, 
+.input-group textarea {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    color: white;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.input-group input:focus, 
+.input-group textarea:focus {
+    border-color: var(--primary-red);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.submit-btn:hover {
+    background: #c32f3a;
+    transform: translateY(-2px);
+}
+
+/* Footer Panel Styling */
+.main-footer {
+    background: #050505;
+    padding: 60px 5% 20px;
+    border-top: 1px solid var(--glass-bg);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-brand p {
+    color: #888;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.footer-links h4, .footer-socials h4 {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+.footer-links ul, .footer-socials ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li, .footer-socials li {
+    margin-bottom: 10px;
+}
+
+.footer-links a, .footer-socials a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover, .footer-socials a:hover {
+    color: var(--primary-red);
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid var(--glass-bg);
+    padding-top: 20px;
+    color: #555;
+    font-size: 0.8rem;
+}
