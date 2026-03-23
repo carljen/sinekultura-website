@@ -164,6 +164,7 @@ nav {
     background: rgba(5, 5, 5, 0.6);
     z-index: -1;
 }
+.admin-btn:hover { background: var(--text-main); color: var(--bg-color) !important; }
 
 .hero-content {
     z-index: 10;
@@ -192,6 +193,7 @@ nav {
     min-height: 1.5em;        /* Increased slightly for safety */
     line-height: 1.2;
 }
+.primary-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3); }
 
 .hero-subtext {
     font-size: 1.4rem;
