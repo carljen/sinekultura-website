@@ -3,46 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sine Kultura | Official Portfolio</title>
+    <title>Sine Kultura | Home</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <nav class="fade-in">
-        <div class="logo">SINE KULTURA</div>
-        <ul class="nav-links">
-            <li><a href="#portfolio">Our Work</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Partnerships</a></li>
-            <li><a href="admin-login.html" class="admin-btn">Admin</a></li>
-        </ul>
-    </nav>
+    <div class="brand-container">
+        <img src="assets/media/logo.png" alt="Logo" class="nav-logo" id="admin-trigger">
+        <div class="logo-text">SINE KULTURA</div>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="portfolio.html">Our Work</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="#partnership">Partnerships</a></li>
+    </ul>
+</nav>
 
-    <section class="hero slide-up">
+    <header class="hero-section">
+        <div class="video-overlay"></div>
+        <video autoplay muted loop id="bg-video">
+            <source src="assets/media/hero-bg.mp4" type="video/mp4">
+        </video>
+        
         <div class="hero-content">
-            <h1>Visual Storytelling.</h1>
-            <p>The official film and photography portfolio of Sine Kultura.</p>
-            <a href="#portfolio" class="primary-btn">View Portfolio</a>
+            <h1 class="glow-text"><span id="dynamic-text" class="changing-text"></span></h1>
+            <p class="hero-subtext">Same passion, new vision.</p>
+            <a href="portfolio.html" class="primary-btn">Explore Our Work</a>
+        </div>
+    </header>
+
+    <section class="featured-preview">
+        <div class="section-header text-center">
+            <h2 class="glow-text-subtle">Latest Masterpieces</h2>
+            <p class="subtitle">A glimpse into our recent cinematic and photographic journeys.</p>
+        </div>
+        
+        <div class="preview-grid">
+            <div class="preview-card">
+                <div class="img-placeholder" style="background-image: url('assets/media/sample1.jpg');"></div>
+                <div class="card-info">
+                    <h3>Inhinyerong Maniniyot</h3>
+                    <span>Photography</span>
+                </div>
+            </div>
+            <div class="preview-card">
+                <div class="img-placeholder" style="background-image: url('assets/media/sample2.jpg');"></div>
+                <div class="card-info">
+                    <h3>BulSU Intramurals 2026</h3>
+                    <span>Event Highlight</span>
+                </div>
+            </div>
+            <div class="preview-card">
+                <div class="img-placeholder" style="background-image: url('assets/media/sample3.jpg');"></div>
+                <div class="card-info">
+                    <h3>Thesis: Silent Voices</h3>
+                    <span>Short Film</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center" style="margin-top: 40px;">
+            <a href="portfolio.html" class="secondary-btn">View Full Portfolio</a>
         </div>
     </section>
 
-    <section id="portfolio" class="portfolio-section slide-up-delayed">
-        <h2>Featured Projects</h2>
-        <div class="grid">
-            <div class="card">
-                <div class="card-image" style="background-color: #2a2a2a;"></div>
-                <div class="card-content">
-                    <h3>Inhinyerong Maniniyot</h3>
-                    <p>Photography Collection</p>
-                </div>
+    <section id="partnership" class="contact-section">
+        <h2 class="glow-text-subtle">Partner With Us</h2>
+        <p class="subtitle">Have a project in mind? Let's collaborate.</p>
+        <form class="contact-form">
+            <input type="text" placeholder="Organization / Name" required>
+            <input type="email" placeholder="Email Address" required>
+            <textarea rows="5" placeholder="Project Details..." required></textarea>
+            <button type="submit" class="primary-btn submit-btn">Send Request</button>
+        </form>
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo-text">SINE KULTURA</div>
+                <p>Capturing the culture and arts through the lens of passionate student filmmakers and photographers at Bulacan State University.</p>
             </div>
-            <div class="card">
-                <div class="card-image" style="background-color: #2a2a2a;"></div>
-                <div class="card-content">
-                    <h3>Short Film Title</h3>
-                    <p>Cinematography | 2026</p>
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="about.html">Meet the Team</a></li>
+                    <li><a href="#partnership">Work With Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p>Email: official@sinekultura.com</p>
+                <p>Location: BulSU Office of Culture and Arts</p>
+            </div>
+            <div class="footer-socials">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/sinekulturabulsu" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="your-instagram-link" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="your-youtube-link" target="_blank"><i class="fa-brands fa-youtube"></i></a>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Sine Kultura. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const words = ["Visual Storytelling.", "Cinematic Excellence.", "Authentic Artistry."];
+        let i = 0;
+        let timer;
+
+        function typingEffect() {
+            let word = words[i].split("");
+            var loopTyping = function() {
+                if (word.length > 0) {
+                    document.getElementById('dynamic-text').innerHTML += word.shift();
+                } else {
+                    setTimeout(deletingEffect, 2000);
+                    return false;
+                };
+                timer = setTimeout(loopTyping, 100);
+            };
+            loopTyping();
+        }
+
+        function deletingEffect() {
+            let word = words[i].split("");
+            var loopDeleting = function() {
+                if (word.length > 0) {
+                    word.pop();
+                    document.getElementById('dynamic-text').innerHTML = word.join("");
+                } else {
+                    i = (words.length > (i + 1)) ? i + 1 : 0;
+                    setTimeout(typingEffect, 500);
+                    return false;
+                };
+                timer = setTimeout(loopDeleting, 50);
+            };
+            loopDeleting();
+        }
+        typingEffect();
+    </script>
+
+    <script>
+    let clickCount = 0;
+    const logo = document.getElementById('admin-trigger');
+
+    logo.addEventListener('click', () => {
+        clickCount++;
+        if (clickCount === 3) {
+            window.location.href = 'admin-login.html'; // Secretly redirects
+        }
+        // Reset count after 1 second if 3 clicks aren't reached
+        setTimeout(() => { clickCount = 0; }, 1000);
+    });
+</script>
 </body>
 </html>
