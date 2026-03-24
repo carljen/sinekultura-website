@@ -484,19 +484,32 @@ nav {
 
 /* --- RESPONSIVE DESIGN FOR MOBILE --- */
 @media (max-width: 768px) {
-    
-    /* 1. The Navigation Bar */
     nav {
-        flex-direction: column !important;
+        display: flex;
+        flex-direction: column !important; /* Stack logo and links */
+        align-items: center;
         height: auto !important;
-        padding: 15px 5%;
-        gap: 10px;
+        padding: 20px 0 !important;
+        background-color: #000; /* Ensures visibility against background */
     }
 
     .nav-links {
-        gap: 15px;
+        display: flex !important;
+        flex-direction: row; /* Keep links side-by-side but wrapped */
         flex-wrap: wrap;
         justify-content: center;
+        gap: 15px;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.1); /* Adds a slight button feel */
+        border-radius: 5px;
+        text-decoration: none;
+        color: #fff !important;
     }
 
     /* 2. The Hero / Main Headings */
