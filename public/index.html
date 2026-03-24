@@ -14,7 +14,7 @@
         <div class="logo-text">SINE KULTURA</div>
     </div>
     <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html" style="color: var(--accent-gold);">Home</a></li>
         <li><a href="portfolio.html">Our Work</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="#partnership">Partnerships</a></li>
@@ -40,28 +40,8 @@
             <p class="subtitle">A glimpse into our recent cinematic and photographic journeys.</p>
         </div>
         
-        <div class="preview-grid">
-            <div class="preview-card">
-                <div class="img-placeholder" style="background-image: url('assets/media/sample1.jpg');"></div>
-                <div class="card-info">
-                    <h3>Inhinyerong Maniniyot</h3>
-                    <span>Photography</span>
-                </div>
-            </div>
-            <div class="preview-card">
-                <div class="img-placeholder" style="background-image: url('assets/media/sample2.jpg');"></div>
-                <div class="card-info">
-                    <h3>BulSU Intramurals 2026</h3>
-                    <span>Event Highlight</span>
-                </div>
-            </div>
-            <div class="preview-card">
-                <div class="img-placeholder" style="background-image: url('assets/media/sample3.jpg');"></div>
-                <div class="card-info">
-                    <h3>Thesis: Silent Voices</h3>
-                    <span>Short Film</span>
-                </div>
-            </div>
+        <div class="preview-grid" id="featured-portfolio-grid">
+            <p style="color: var(--text-muted); width: 100%; text-align: center;">Loading featured works...</p>
         </div>
         
         <div class="text-center" style="margin-top: 40px;">
@@ -72,10 +52,14 @@
     <section id="partnership" class="contact-section">
         <h2 class="glow-text-subtle">Partner With Us</h2>
         <p class="subtitle">Have a project in mind? Let's collaborate.</p>
-        <form class="contact-form">
-            <input type="text" placeholder="Organization / Name" required>
-            <input type="email" placeholder="Email Address" required>
-            <textarea rows="5" placeholder="Project Details..." required></textarea>
+        <form class="contact-form" id="partnership-form">
+            <input type="text" id="partner-org" placeholder="Organization / Name" required>
+            <input type="email" id="partner-email" placeholder="Email Address" required>
+            <textarea id="partner-message" rows="5" placeholder="Short Project Details..." required></textarea>
+            
+            <label style="color: var(--text-muted); font-size: 0.85rem; display: block; text-align: left; margin-bottom: 5px;">Attach Formal Letter/Proposal (PDF/Word):</label>
+            <input type="file" id="partner-file" accept=".pdf,.doc,.docx" style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); color: white; border-radius: 4px; width: 100%;">
+            
             <button type="submit" class="primary-btn submit-btn">Send Request</button>
         </form>
     </section>
@@ -159,9 +143,163 @@
         if (clickCount === 3) {
             window.location.href = 'admin-login.html'; // Secretly redirects
         }
-        // Reset count after 1 second if 3 clicks aren't reached
         setTimeout(() => { clickCount = 0; }, 1000);
     });
 </script>
+
+<script type="module">
+    import { db } from './firebase-config.js'; 
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // --- UPDATE HERO VIDEO ---
+    onValue(ref(db, 'settings/hero'), (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.videoPath) {
+            const vid = document.getElementById('bg-video');
+            if (vid) {
+                vid.src = data.videoPath;
+                vid.load();
+                vid.play();
+            }
+        }
+    });
+
+    // --- RANDOMIZED PORTFOLIO FETCHER & CYCLER ---
+    const featuredGrid = document.getElementById('featured-portfolio-grid');
+    let fullPortfolioArray = [];
+    let shuffleInterval = null; // Variable to control our timer
+
+    // Helper function to draw the cards on the screen
+    function renderFeaturedCards(itemsToRender) {
+        featuredGrid.innerHTML = ''; 
+        itemsToRender.forEach(item => {
+            // Grab the media array
+            const mediaArray = item.media ? item.media : (item.path ? [item.path] : ['assets/media/placeholder.jpg']);
+            
+            // Look at the very first file in the album
+            const firstMedia = mediaArray.length > 0 ? mediaArray[0] : 'assets/media/placeholder.jpg';
+            let mediaHTML = '';
+
+            // If the first file is a video, play it silently!
+            if (firstMedia.includes('.mp4') || firstMedia.includes('/video/')) {
+                // We use a Cloudinary generated thumbnail as the poster just in case the video takes a second to load
+                const posterUrl = firstMedia.replace('.mp4', '.jpg');
+                
+                mediaHTML = `
+                    <video autoplay muted loop playsinline poster="${posterUrl}" style="width: 100%; height: 250px; object-fit: cover; display: block; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <source src="${firstMedia}" type="video/mp4">
+                    </video>`;
+            } else {
+                // If it's an image, render the normal background div
+                mediaHTML = `
+                    <div class="img-placeholder" style="background-image: url('${firstMedia}'); height: 250px; background-size: cover; background-position: center; border-bottom: 1px solid rgba(255,255,255,0.1);"></div>`;
+            }
+
+            featuredGrid.innerHTML += `
+                <div class="preview-card fade-in" style="background: #111; border-radius: 8px; overflow: hidden; transition: transform 0.3s; animation: fadeIn 1s ease-in-out;">
+                    ${mediaHTML}
+                    <div class="card-info" style="padding: 15px;">
+                        <h3 style="margin: 0 0 5px 0;">${item.title}</h3>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">${item.desc}</span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Function that handles the random shuffling
+    function shuffleAndRender() {
+        if (fullPortfolioArray.length <= 3) return; // Safety check
+        
+        // Shuffle the array and pick the top 3
+        let shuffled = [...fullPortfolioArray].sort(() => 0.5 - Math.random());
+        let featuredItems = shuffled.slice(0, 3);
+        
+        renderFeaturedCards(featuredItems);
+    }
+
+    // Fetch data from Firebase
+    onValue(ref(db, 'portfolio'), (snapshot) => {
+        // Clear any existing timers so they don't overlap if the database updates
+        if (shuffleInterval) {
+            clearInterval(shuffleInterval);
+            shuffleInterval = null;
+        }
+
+        const data = snapshot.val();
+        if (data) {
+            fullPortfolioArray = Object.values(data);
+            
+            // On first load, just show the first 3 items normally
+            let initialItems = fullPortfolioArray.slice(0, 3);
+            renderFeaturedCards(initialItems);
+
+            // ONLY trigger the looping shuffle if we have more than 3 items!
+            if (fullPortfolioArray.length > 3) {
+                shuffleInterval = setInterval(shuffleAndRender, 6000);
+            }
+        } else {
+            featuredGrid.innerHTML = '<p style="color: var(--text-muted); width: 100%; text-align: center;">No featured works found.</p>';
+        }
+    });
+
+    // --- NODE.JS API CONNECTION FOR PARTNERSHIPS ---
+    document.getElementById('partnership-form').addEventListener('submit', async function(e) {
+        e.preventDefault(); 
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading & Sending...';
+
+        // 1. Upload the file to Cloudinary first
+        async function uploadPublicFile(fileInputId) {
+            const fileInput = document.getElementById(fileInputId);
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const cloudName = "dri3b9aac"; 
+                const uploadPreset = "sinekultura_preset"; 
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", uploadPreset);
+                try {
+                    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+                    const response = await fetch(cloudinaryUrl, { method: "POST", body: formData });
+                    const data = await response.json();
+                    if (data.secure_url) return data.secure_url;
+                } catch (error) { console.error("Upload failed:", error); }
+            }
+            return null;
+        }
+
+        const uploadedFileUrl = await uploadPublicFile('partner-file');
+
+        const payload = {
+            orgName: document.getElementById('partner-org').value,
+            email: document.getElementById('partner-email').value,
+            message: document.getElementById('partner-message').value,
+            fileUrl: uploadedFileUrl
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/api/partnership', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert("Success: " + result.success);
+                e.target.reset(); 
+            } else {
+                alert("Error: " + result.error); 
+            }
+        } catch (error) {
+            console.error("Connection failed:", error);
+            alert("Could not reach the server.");
+        } finally {
+            btn.innerText = originalText;
+        }
+    });
+</script>
+
 </body>
 </html>

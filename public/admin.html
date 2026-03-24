@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Sine Kultura</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="admin-body">
+
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <img src="assets/media/logo.png" alt="Logo" class="admin-logo" style="border: none;">
+            <h3>Admin Panel</h3>
+        </div>
+        <ul class="admin-nav">
+            <li><a href="#" class="active" onclick="switchTab(event, 'partnerships')"><i class="fa-solid fa-handshake"></i> Partnerships</a></li>
+            <li><a href="#" onclick="switchTab(event, 'hero-manager')"><i class="fa-solid fa-display"></i> Hero Settings</a></li>
+            <li><a href="#" onclick="switchTab(event, 'portfolio-manager')"><i class="fa-solid fa-film"></i> Portfolio</a></li>
+            <li><a href="#" onclick="switchTab(event, 'board-manager')"><i class="fa-solid fa-user-tie"></i> Exec Board</a></li>
+            <li><a href="#" onclick="switchTab(event, 'member-manager')"><i class="fa-solid fa-users"></i> Directory</a></li>
+            <li><a href="index.html" class="logout-btn" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Exit to Site</a></li>
+        </ul>
+    </aside>
+
+    <main class="admin-main">
+        
+        <section id="partnerships" class="admin-section active">
+            <div class="section-header-flex"><h2>Partnership Requests</h2></div>
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead><tr><th>Date</th><th>Organization</th><th>Email</th><th>Message</th><th>File</th><th>Action</th></tr></thead>
+                    <tbody id="partnerships-list">
+                        <tr><td colspan="4" class="text-center" style="color: var(--text-muted); padding: 30px;">Loading requests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="portfolio-manager" class="admin-section">
+            <div class="section-header-flex">
+                <h2>Manage Portfolio (Albums)</h2>
+                <button class="primary-btn" onclick="openModal('portfolio-modal')"><i class="fa-solid fa-plus"></i> Add Album/Masterpiece</button>
+            </div>
+            <div class="admin-grid" id="portfolio-grid"></div>
+        </section>
+
+        <section id="board-manager" class="admin-section">
+            <div class="section-header-flex">
+                <h2>Manage Executive Board</h2>
+                <button class="primary-btn" onclick="openModal('officer-modal')"><i class="fa-solid fa-plus"></i> Add Officer</button>
+            </div>
+            <div class="admin-grid" id="officer-grid"></div>
+        </section>
+
+        <section id="member-manager" class="admin-section">
+            <div class="section-header-flex">
+                <h2>Member & Trainee Directory</h2>
+                <button class="primary-btn" onclick="openModal('member-modal')"><i class="fa-solid fa-plus"></i> Add Member</button>
+            </div>
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead><tr><th>Photo</th><th>Name</th><th>Student No.</th><th>Specialization</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="member-list"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="hero-manager" class="admin-section">
+            <div class="section-header-flex"><h2>Hero Section Settings</h2></div>
+            <div class="admin-card">
+                <h3>Current Cinematic Preview</h3>
+                <div style="width: 100%; height: 50vh; min-height: 400px; border-radius: 8px; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(212, 175, 55, 0.3); position: relative;">
+                    <video id="hero-video-preview" autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
+                        <source src="assets/media/hero-bg.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <form class="admin-form" id="hero-form" onsubmit="updateHero(event)">
+                    <label style="color: var(--text-muted); font-size: 0.85rem;">Upload a new MP4 video for the background:</label>
+                    <input type="file" id="hero-file-input" accept="video/mp4" required>
+                    <button type="submit" class="primary-btn"><i class="fa-solid fa-upload"></i> Upload & Replace Background</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-backdrop" id="modal-backdrop" onclick="closeAllModals()"></div>
+
+    <div class="admin-modal" id="portfolio-modal">
+        <h3><i class="fa-solid fa-film"></i> Add / Edit Masterpiece</h3>
+        <form class="admin-form" id="port-form" onsubmit="savePortfolio(event)">
+            <input type="hidden" id="port-id">
+            <input type="text" id="port-title" placeholder="Project / Album Title" required>
+            <input type="text" id="port-desc" placeholder="Category / Description" required>
+            <label style="color: var(--text-muted); font-size: 0.85rem;">Upload Media (Select multiple Photos/Videos):</label>
+            <input type="file" id="port-file" accept="image/*,video/mp4" multiple>
+            <div class="modal-actions">
+                <button type="button" class="action-btn" onclick="closeAllModals()">Cancel</button>
+                <button type="submit" class="primary-btn">Save to Archives</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="admin-modal" id="officer-modal">
+        <h3>Add / Edit Officer</h3>
+        <form class="admin-form" id="off-form" onsubmit="saveOfficer(event)">
+            <input type="hidden" id="off-id">
+            <input type="text" id="off-name" placeholder="Full Name" required>
+            <input type="text" id="off-role" placeholder="Position" required>
+            <label style="color: var(--text-muted); font-size: 0.8rem;">Upload Official Photo:</label>
+            <input type="file" id="off-file" accept="image/*">
+            <div class="modal-actions">
+                <button type="button" class="action-btn" onclick="closeAllModals()">Cancel</button>
+                <button type="submit" class="primary-btn">Save Officer</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="admin-modal" id="member-modal">
+        <h3><i class="fa-solid fa-users"></i> Add / Edit Member</h3>
+        <form class="admin-form" id="mem-form" onsubmit="saveMember(event)">
+            <input type="hidden" id="mem-id">
+            <input type="text" id="mem-name" placeholder="Full Name" required>
+            <input type="text" id="mem-studentNo" placeholder="Student Number" required>
+            <input type="text" id="mem-spec" placeholder="Specialization" required>
+            <select id="mem-status" required>
+                <option value="" disabled selected>Select Status</option>
+                <option value="Trainee">Trainee</option>
+                <option value="Official Member">Official Member</option>
+            </select>
+            <label style="color: var(--text-muted); font-size: 0.85rem;">Upload Member Photo:</label>
+            <input type="file" id="mem-file" accept="image/*">
+            <div class="modal-actions">
+                <button type="button" class="action-btn" onclick="closeAllModals()">Cancel</button>
+                <button type="submit" class="primary-btn">Save Member</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="admin-modal" id="message-modal">
+        <h3><i class="fa-solid fa-envelope-open-text"></i> Partnership Request</h3>
+        
+        <div style="margin-bottom: 15px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 10px;">
+            <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;"><strong>From:</strong> <span id="msg-orgName" style="color: white;"></span></p>
+            <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.9rem;"><strong>Email:</strong> <span id="msg-email" style="color: white;"></span></p>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); max-height: 300px; overflow-y: auto;">
+            <p id="msg-content" style="white-space: pre-wrap; word-wrap: break-word; word-break: break-word; margin: 0; line-height: 1.6; color: #ddd; font-size: 0.95rem;"></p>
+        </div>
+        
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button type="button" class="primary-btn" onclick="closeAllModals()" style="width: 100%;">Close Message</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // --- AUTH & NAVIGATION ---
+        if (sessionStorage.getItem('sine_admin_auth') !== 'true') window.location.href = 'admin-login.html';
+        window.logout = function() { sessionStorage.removeItem('sine_admin_auth'); window.location.href = 'index.html'; }
+        
+        window.switchTab = (e, id) => {
+            e.preventDefault();
+            document.querySelectorAll('.admin-nav a').forEach(l => l.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            setTimeout(() => document.getElementById(id).classList.add('active'), 50);
+        }
+
+        // --- SECURE MESSAGE VIEWER ---
+        window.viewMessage = (encName, encEmail, encMsg) => {
+            document.getElementById('msg-orgName').innerText = decodeURIComponent(encName);
+            document.getElementById('msg-email').innerText = decodeURIComponent(encEmail);
+            document.getElementById('msg-content').innerText = decodeURIComponent(encMsg);
+            window.openModal('message-modal');
+        }
+
+        window.openModal = (id) => {
+            document.getElementById('modal-backdrop').classList.add('show');
+            document.getElementById(id).classList.add('show');
+        }
+
+        window.closeAllModals = () => {
+            document.getElementById('modal-backdrop').classList.remove('show');
+            document.querySelectorAll('.admin-modal').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('form').forEach(f => {
+                f.reset();
+                // Reset button text in case it was stuck on "Loading..."
+                const btn = f.querySelector('button[type="submit"]');
+                if (btn) btn.innerHTML = btn.innerHTML.replace('<i class="fa-solid fa-spinner fa-spin"></i> ', '');
+            });
+            document.querySelectorAll('input[type="hidden"]').forEach(i => i.value = '');
+        }
+
+        // ==========================================
+        // --- HELPER: CLOUDINARY UPLOAD ---
+        // ==========================================
+        async function uploadFileHelper(fileInputId) {
+            const fileInput = document.getElementById(fileInputId);
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                
+                // IMPORTANT: Change this to your Cloudinary Cloud Name
+                const cloudName = "dri3b9aac"; 
+                const uploadPreset = "sinekultura_preset"; 
+                
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", uploadPreset);
+
+                try {
+                    const resourceType = file.type.includes('video') ? 'video' : 'image';
+                    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+                    
+                    const response = await fetch(cloudinaryUrl, { method: "POST", body: formData });
+                    const data = await response.json();
+                    
+                    if (data.secure_url) {
+                        return data.secure_url; 
+                    } else {
+                        console.error("Cloudinary Error:", data); alert("File upload failed.");
+                        return null;
+                    }
+                } catch (error) {
+                    console.error("Upload failed:", error); return null;
+                }
+            }
+            return null; // Return null if no file was selected
+        }
+
+        // --- HELPER: CLOUDINARY MULTIPLE FILE UPLOAD ---
+        async function uploadMultipleFiles(fileInputId) {
+            const fileInput = document.getElementById(fileInputId);
+            const files = fileInput.files;
+            if (files.length === 0) return null;
+
+            const cloudName = "dri3b9aac"; // Your Cloudinary Name
+            const uploadPreset = "sinekultura_preset"; 
+
+            // Create an array of upload tasks to run at the same time
+            const uploadPromises = Array.from(files).map(async (file) => {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", uploadPreset);
+                
+                const resourceType = file.type.includes('video') ? 'video' : 'image';
+                const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
+                try {
+                    const response = await fetch(url, { method: "POST", body: formData });
+                    const data = await response.json();
+                    return data.secure_url;
+                } catch (error) {
+                    console.error("Upload failed for one file:", error);
+                    return null;
+                }
+            });
+
+            // Wait for all uploads to finish and return the list of URLs
+            const results = await Promise.all(uploadPromises);
+            return results.filter(url => url !== null); // Remove any failed uploads
+        }
+
+        // ==========================================
+        // 1. PARTNERSHIPS
+        // ==========================================
+        onValue(ref(db, 'partnerships'), (snapshot) => {
+            const list = document.getElementById('partnerships-list');
+            list.innerHTML = '';
+            const data = snapshot.val();
+            if (!data) { list.innerHTML = '<tr><td colspan="6" class="text-center">No requests yet.</td></tr>'; return; }
+            Object.keys(data).forEach(id => {
+                const item = data[id];
+                
+                // Create the File Link
+                const fileLink = item.fileUrl 
+                    ? `<a href="${item.fileUrl}" target="_blank" style="color: var(--accent-gold); font-weight: bold; text-decoration: underline;"><i class="fa-solid fa-file-pdf"></i> View</a>` 
+                    : '<span style="color: var(--text-muted); font-size: 0.8rem;">None</span>';
+
+                // Encode strings safely to prevent HTML injection breaks
+                const encodedMsg = encodeURIComponent(item.message || 'No message provided.');
+                const encodedName = encodeURIComponent(item.orgName || 'N/A');
+                const encodedEmail = encodeURIComponent(item.email || 'N/A');
+
+                list.innerHTML += `
+                    <tr>
+                        <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'Recent'}</td>
+                        <td>${item.orgName || 'N/A'}</td>
+                        <td>${item.email || 'N/A'}</td>
+                        <td>
+                            <button class="action-btn" style="background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); font-size: 0.8rem; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--accent-gold);" onclick="viewMessage('${encodedName}', '${encodedEmail}', '${encodedMsg}')">
+                                <i class="fa-solid fa-envelope-open-text"></i> Read
+                            </button>
+                        </td>
+                        <td>${fileLink}</td>
+                        <td><button class="action-btn delete-btn" onclick="deleteItem('partnerships','${id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>`;
+            });
+        });
+
+        // ==========================================
+        // 2. HERO SETTINGS
+        // ==========================================
+        onValue(ref(db, 'settings/hero'), (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.videoPath) {
+                const vid = document.getElementById('hero-video-preview');
+                vid.src = data.videoPath;
+                vid.load(); // Forces the browser to fetch the new video
+                vid.play(); // Forces the browser to play it
+            }
+        });
+
+        window.updateHero = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading... (Please wait)';
+
+            const newUrl = await uploadFileHelper('hero-file-input');
+            if (newUrl) {
+                await set(ref(db, 'settings/hero'), { videoPath: newUrl });
+                alert("Hero background successfully updated live!");
+            }
+            
+            // Ensures the button resets even if the upload fails
+            btn.innerHTML = originalText;
+            e.target.reset();
+        }
+
+        // ==========================================
+        // 3. PORTFOLIO
+        // ==========================================
+        onValue(ref(db, 'portfolio'), (snapshot) => {
+            const grid = document.getElementById('portfolio-grid');
+            grid.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    const item = data[id];
+                    grid.innerHTML += `
+                        <div class="admin-item-card">
+                            <div class="item-img" style="background-image: url('${item.path || 'assets/media/placeholder.jpg'}'); height: 120px; background-size: cover; border-radius: 4px;"></div>
+                            <div class="item-details">
+                                <h4>${item.title}</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);">${item.desc}</p>
+                                <div class="item-actions">
+                                    <button class="action-btn edit-btn" onclick="editPortfolio('${id}','${item.title}','${item.desc}')"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deleteItem('portfolio','${id}')"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+        });
+
+        window.savePortfolio = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Album...';
+
+            const id = document.getElementById('port-id').value;
+            // Fetch the array of URLs!
+            const newMediaUrls = await uploadMultipleFiles('port-file');
+            
+            const payload = {
+                title: document.getElementById('port-title').value,
+                desc: document.getElementById('port-desc').value,
+            };
+            
+            // Save the array as "media"
+            if (newMediaUrls && newMediaUrls.length > 0) {
+                payload.media = newMediaUrls; 
+            }
+
+            if (id) await update(ref(db, 'portfolio/' + id), payload);
+            else {
+                if (!newMediaUrls) payload.media = ['assets/media/video-thumb.jpg']; // fallback
+                await set(push(ref(db, 'portfolio')), payload);
+            }
+            window.closeAllModals();
+        }
+
+        window.editPortfolio = (id, title, desc) => {
+            document.getElementById('port-id').value = id;
+            document.getElementById('port-title').value = title;
+            document.getElementById('port-desc').value = desc;
+            window.openModal('portfolio-modal');
+        }
+
+        // ==========================================
+        // 4. EXECUTIVE BOARD
+        // ==========================================
+        onValue(ref(db, 'executive_board'), (snapshot) => {
+            const grid = document.getElementById('officer-grid');
+            grid.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    const item = data[id];
+                    grid.innerHTML += `
+                        <div class="admin-item-card text-center">
+                            <img src="${item.img || 'assets/media/officers/placeholder.png'}" class="item-avatar" style="object-fit:cover;">
+                            <div class="item-details">
+                                <h4>${item.name}</h4>
+                                <p style="color: var(--accent-gold); font-size: 0.8rem;">${item.role}</p>
+                                <div class="item-actions justify-center">
+                                    <button class="action-btn edit-btn" onclick="editOfficer('${id}','${item.name}','${item.role}')"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deleteItem('executive_board','${id}')"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+        });
+
+        window.saveOfficer = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const id = document.getElementById('off-id').value;
+            const newImgUrl = await uploadFileHelper('off-file');
+
+            const payload = {
+                name: document.getElementById('off-name').value,
+                role: document.getElementById('off-role').value
+            };
+            if (newImgUrl) payload.img = newImgUrl;
+
+            if (id) await update(ref(db, 'executive_board/' + id), payload);
+            else {
+                if (!newImgUrl) payload.img = 'assets/media/officers/placeholder.png'; // fallback
+                await set(push(ref(db, 'executive_board')), payload);
+            }
+            window.closeAllModals();
+        }
+
+        window.editOfficer = (id, name, role) => {
+            document.getElementById('off-id').value = id;
+            document.getElementById('off-name').value = name;
+            document.getElementById('off-role').value = role;
+            window.openModal('officer-modal');
+        }
+
+        // ==========================================
+        // 5. DIRECTORY (MEMBERS)
+        // ==========================================
+        onValue(ref(db, 'members'), (snapshot) => {
+            const list = document.getElementById('member-list');
+            list.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    const item = data[id];
+                    list.innerHTML += `
+                        <tr>
+                            <td><img src="${item.img || 'assets/media/officers/placeholder.png'}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"></td>
+                            <td>${item.name}</td>
+                            <td>${item.studentNo}</td>
+                            <td>${item.spec}</td>
+                            <td>${item.status}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="editMember('${id}','${item.name}','${item.studentNo}','${item.spec}','${item.status}')"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('members','${id}')"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            }
+        });
+
+        window.saveMember = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const id = document.getElementById('mem-id').value;
+            const newImgUrl = await uploadFileHelper('mem-file');
+
+            const payload = {
+                name: document.getElementById('mem-name').value,
+                studentNo: document.getElementById('mem-studentNo').value,
+                spec: document.getElementById('mem-spec').value,
+                status: document.getElementById('mem-status').value
+            };
+            if (newImgUrl) payload.img = newImgUrl;
+
+            if (id) await update(ref(db, 'members/' + id), payload);
+            else {
+                if (!newImgUrl) payload.img = 'assets/media/officers/placeholder.png'; // fallback
+                await set(push(ref(db, 'members')), payload);
+            }
+            window.closeAllModals();
+        }
+
+        window.editMember = (id, name, studentNo, spec, status) => {
+            document.getElementById('mem-id').value = id;
+            document.getElementById('mem-name').value = name;
+            document.getElementById('mem-studentNo').value = studentNo;
+            document.getElementById('mem-spec').value = spec;
+            document.getElementById('mem-status').value = status;
+            window.openModal('member-modal');
+        }
+
+        // ==========================================
+        // GLOBAL DELETE
+        // ==========================================
+        window.deleteItem = async (folder, id) => {
+            if(confirm("Permanently remove from database?")) await remove(ref(db, `${folder}/${id}`));
+        }
+    </script>
+</body>
+</html>

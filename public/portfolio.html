@@ -33,23 +33,20 @@
     </header>
 
     <section class="featured-preview">
-        <div class="preview-grid">
-            <div class="preview-card">
-                <div class="img-placeholder" style="background-image: url('assets/media/video-thumb.jpg');"></div>
-                <div class="card-info">
-                    <h3>BulSU Year-End Film</h3>
-                    <span>Cinematography</span>
-                </div>
-            </div>
-            <div class="preview-card">
-                <div class="img-placeholder" style="background-image: url('assets/media/photo-sample.jpg');"></div>
-                <div class="card-info">
-                    <h3>Street Chronicles</h3>
-                    <span>Inhinyerong Maniniyot</span>
-                </div>
-            </div>
+        <div class="preview-grid" id="public-portfolio-grid">
+            <p style="color: var(--text-muted); width: 100%; text-align: center;">Loading masterpieces...</p>
         </div>
     </section>
+
+    <div class="modal-backdrop" id="album-backdrop" onclick="closeAlbum()"></div>
+    <div class="admin-modal" id="album-modal" style="max-width: 900px; width: 95%; top: 5%; transform: translate(-50%, 0);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="album-title" class="glow-text-subtle" style="margin: 0;"></h2>
+            <button onclick="closeAlbum()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="album-gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+            </div>
+    </div>
 
     <footer class="site-footer">
         <div class="footer-grid">
@@ -117,6 +114,108 @@
             if (count === 3) window.location.href = 'admin-login.html';
             setTimeout(() => { window.adminClicks = 0; }, 1000);
         });
+    </script>
+
+    <script type="module">
+        import { db } from './firebase-config.js'; 
+        import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // --- UPDATE HERO VIDEO ---
+        onValue(ref(db, 'settings/hero'), (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.videoPath) {
+                const vid = document.getElementById('bg-video');
+                if (vid) {
+                    vid.src = data.videoPath; 
+                    vid.load();
+                    vid.play();
+                }
+            }
+        });
+
+        // --- ALBUM VIEWER LOGIC ---
+        window.openAlbum = (encTitle, encMedia) => {
+            const title = decodeURIComponent(encTitle);
+            const mediaArray = JSON.parse(decodeURIComponent(encMedia));
+            
+            document.getElementById('album-title').innerText = title;
+            const gallery = document.getElementById('album-gallery');
+            gallery.innerHTML = ''; 
+
+            mediaArray.forEach(url => {
+                if (url.includes('.mp4') || url.includes('/video/')) {
+                    // MAGIC TRICK: Ask Cloudinary for the JPG thumbnail of the video!
+                    const thumbnailUrl = url.replace('.mp4', '.jpg');
+                    
+                    // Added poster attribute and removed autoplay
+                    gallery.innerHTML += `
+                        <video controls preload="metadata" poster="${thumbnailUrl}" style="width: 100%; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                            <source src="${url}#t=0.001" type="video/mp4">
+                        </video>`;
+                } else {
+                    gallery.innerHTML += `
+                        <a href="${url}" target="_blank" style="display: block; cursor: zoom-in;" title="Click to view full resolution">
+                            <img src="${url}" style="width: 100%; height: auto; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                        </a>`;
+                }
+            });
+
+            document.getElementById('album-backdrop').classList.add('show');
+            document.getElementById('album-modal').classList.add('show');
+        }
+
+        window.closeAlbum = () => {
+            document.getElementById('album-backdrop').classList.remove('show');
+            document.getElementById('album-modal').classList.remove('show');
+            document.getElementById('album-gallery').innerHTML = ''; // Stops videos from playing in background
+        }
+
+        // --- LOAD PORTFOLIO ---
+        const portfolioGrid = document.getElementById('public-portfolio-grid');
+        onValue(ref(db, 'portfolio'), (snapshot) => {
+            portfolioGrid.innerHTML = ''; 
+            const data = snapshot.val();
+            
+            if (data) {
+                Object.values(data).forEach(item => {
+                    const mediaArray = item.media ? item.media : (item.path ? [item.path] : ['assets/media/placeholder.jpg']);
+                    
+                    // Map the array so videos act like images for the cycling cover background!
+                    const imageArray = mediaArray.map(url => url.includes('.mp4') ? url.replace('.mp4', '.jpg') : url);
+                    const coverImage = imageArray.length > 0 ? imageArray[0] : 'assets/media/placeholder.jpg';
+
+                    // SECURE ENCODING
+                    const safeTitle = encodeURIComponent(item.title || 'Untitled');
+                    const safeMedia = encodeURIComponent(JSON.stringify(mediaArray));
+                    const safeImages = encodeURIComponent(JSON.stringify(imageArray));
+
+                    portfolioGrid.innerHTML += `
+                        <div class="preview-card" style="cursor: pointer;" onclick="openAlbum('${safeTitle}', '${safeMedia}')">
+                            <div class="img-placeholder cycle-bg" data-images="${safeImages}" data-idx="0" style="background-image: url('${coverImage}'); height: 250px; background-size: cover; background-position: center; transition: background-image 1s ease-in-out;"></div>
+                            <div class="card-info" style="padding: 20px;">
+                                <h3 style="margin-bottom: 5px;">${item.title}</h3>
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">${item.desc}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                portfolioGrid.innerHTML = '<p style="color: var(--text-muted); width: 100%; text-align: center;">No masterpieces found.</p>';
+            }
+        });
+
+        // --- THE SLIDESHOW CYCLER ---
+        setInterval(() => {
+            document.querySelectorAll('.cycle-bg').forEach(bg => {
+                const images = JSON.parse(decodeURIComponent(bg.getAttribute('data-images')));
+                if (images.length > 1) {
+                    let idx = parseInt(bg.getAttribute('data-idx'));
+                    idx = (idx + 1) % images.length; 
+                    bg.setAttribute('data-idx', idx);
+                    bg.style.backgroundImage = `url('${images[idx]}')`;
+                }
+            });
+        }, 3500);
     </script>
 </body>
 </html>

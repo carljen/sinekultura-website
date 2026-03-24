@@ -38,78 +38,8 @@
             <p class="subtitle">The visionary team behind every frame.</p>
         </div>
 
-        <div class="preview-grid">
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Angelo Jo A. Florentino">
-                </div>
-                <h3>FLORENTINO, Angelo Jo A.</h3>
-                <span class="officer-position">President & Event Coordinator</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Carl Jan B. Daulo">
-                </div>
-                <h3>DAULO, Carl Jan B.</h3>
-                <span class="officer-position">VP, Head of Photography & Social Media</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Juan Miguel V. De Dios">
-                </div>
-                <h3>DE DIOS, Juan Miguel V.</h3>
-                <span class="officer-position">Head of Videography</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Rovic N. Santiago">
-                </div>
-                <h3>SANTIAGO, Rovic N.</h3>
-                <span class="officer-position">Head of Graphics</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Jan Janice C. Buena">
-                </div>
-                <h3>BUENA, Jan Janice C.</h3>
-                <span class="officer-position">Deputy Head of Graphics</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Jan Edred C. Hernandez">
-                </div>
-                <h3>HERNANDEZ, Jan Edred C.</h3>
-                <span class="officer-position">Creative Director & Head of Video Editing</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Ehra Dennise M. Adriano">
-                </div>
-                <h3>ADRIANO, Ehra Dennise M.</h3>
-                <span class="officer-position">Head of SWNG</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Czamantha Nicole Gonzaga">
-                </div>
-                <h3>GONZAGA, Czamantha Nicole</h3>
-                <span class="officer-position">Secretary</span>
-            </div>
-
-            <div class="preview-card" style="text-align: center; padding: 40px 20px;">
-                <div class="member-photo-container">
-                    <img src="assets/media/officers/placeholder.png" alt="Carl Emmanuel A. Carson">
-                </div>
-                <h3>CARSON, Carl Emmanuel A.</h3>
-                <span class="officer-position">Treasurer</span>
-            </div>
+        <div class="preview-grid" id="public-officer-grid">
+            <p style="color: var(--text-muted); width: 100%; text-align: center;">Loading Executive Board...</p>
         </div>
     </section>
 
@@ -179,6 +109,34 @@
             clicks++;
             if (clicks === 3) window.location.href = 'admin-login.html';
             setTimeout(() => { clicks = 0; }, 1000);
+        });
+    </script>
+
+    <script type="module">
+        import { db } from './firebase-config.js'; 
+        import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Load Executive Board
+        const officerGrid = document.getElementById('public-officer-grid');
+        onValue(ref(db, 'executive_board'), (snapshot) => {
+            officerGrid.innerHTML = ''; 
+            const data = snapshot.val();
+            
+            if (data) {
+                Object.values(data).forEach(officer => {
+                    officerGrid.innerHTML += `
+                        <div class="preview-card" style="text-align: center; padding: 40px 20px;">
+                            <div class="member-photo-container">
+                                <img src="${officer.img || 'assets/media/officers/placeholder.png'}" alt="${officer.name}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 2px solid var(--accent-gold);">
+                            </div>
+                            <h3>${officer.name}</h3>
+                            <span class="officer-position" style="color: var(--accent-gold); font-size: 0.9rem;">${officer.role}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                officerGrid.innerHTML = '<p style="color: var(--text-muted); width: 100%; text-align: center;">No officers found.</p>';
+            }
         });
     </script>
 </body>
