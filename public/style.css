@@ -634,6 +634,14 @@ nav {
     input, textarea, button {
         font-size: 16px !important; /* Stops iOS auto-zoom */
     }
+
+    .logout-mobile i {
+        color: #ff4c4c !important; /* Red icon to distinguish from Gold */
+    }
+    
+    .logout-mobile:active {
+        background: rgba(255, 76, 76, 0.1) !important;
+    }
 }
 
 /* Hide Mobile Nav on Desktop */
