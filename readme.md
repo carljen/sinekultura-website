@@ -1,5 +1,4 @@
 
-```markdown
 # Sine Kultura - Official Website & Admin Management System
 
 A cloud-integrated, responsive web platform designed for **Sine Kultura** to manage digital portfolios, executive board directories, and partnership requests in real-time.
@@ -48,5 +47,5 @@ The system uses a serverless architecture to ensure high availability and low la
 
 ---
 *Developed for Bulacan State University - Computer Engineering Department.*
-```
+
 
