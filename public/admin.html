@@ -337,27 +337,48 @@
         // 3. PORTFOLIO
         // ==========================================
         onValue(ref(db, 'portfolio'), (snapshot) => {
-            const grid = document.getElementById('portfolio-grid');
-            grid.innerHTML = '';
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach(id => {
-                    const item = data[id];
-                    grid.innerHTML += `
-                        <div class="admin-item-card">
-                            <div class="item-img" style="background-image: url('${item.path || 'assets/media/placeholder.jpg'}'); height: 120px; background-size: cover; border-radius: 4px;"></div>
-                            <div class="item-details">
-                                <h4>${item.title}</h4>
-                                <p style="font-size: 0.8rem; color: var(--text-muted);">${item.desc}</p>
-                                <div class="item-actions">
-                                    <button class="action-btn edit-btn" onclick="editPortfolio('${id}','${item.title}','${item.desc}')"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="action-btn delete-btn" onclick="deleteItem('portfolio','${id}')"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>`;
-                });
+    const grid = document.getElementById('portfolio-grid');
+    grid.innerHTML = '';
+    const data = snapshot.val();
+    
+    if (data) {
+        Object.keys(data).forEach(id => {
+            const item = data[id];
+            
+            // 1. Determine the source (media array vs old path)
+            const displaySrc = (item.media && item.media.length > 0) 
+                ? item.media[0] 
+                : (item.path || 'assets/media/placeholder.jpg');
+
+            // 2. Check if the source is a video (Cloudinary URLs usually contain /video/upload/)
+            const isVideo = displaySrc.includes('/video/upload/') || displaySrc.endsWith('.mp4') || displaySrc.endsWith('.mov');
+
+            // 3. Create the preview element
+            let mediaPreview = '';
+            if (isVideo) {
+                mediaPreview = `
+                    <video src="${displaySrc}" style="width:100%; height:120px; object-fit:cover; border-radius:4px;" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
+                    <div style="position:absolute; top:5px; right:5px; background:rgba(0,0,0,0.7); color:white; padding:2px 6px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-video"></i></div>
+                `;
+            } else {
+                mediaPreview = `<div class="item-img" style="background-image: url('${displaySrc}'); height: 120px; background-size: cover; background-position: center; border-radius: 4px;"></div>`;
             }
+
+            grid.innerHTML += `
+                <div class="admin-item-card" style="position:relative;">
+                    ${mediaPreview}
+                    <div class="item-details">
+                        <h4>${item.title}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">${item.desc}</p>
+                        <div class="item-actions">
+                            <button class="action-btn edit-btn" onclick="editPortfolio('${id}','${item.title}','${item.desc}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="action-btn delete-btn" onclick="deleteItem('portfolio','${id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`;
         });
+    }
+});
 
         window.savePortfolio = async (e) => {
             e.preventDefault();
