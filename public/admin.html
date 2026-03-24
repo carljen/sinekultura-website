@@ -514,5 +514,13 @@
             if(confirm("Permanently remove from database?")) await remove(ref(db, `${folder}/${id}`));
         }
     </script>
+
+    <div class="mobile-admin-nav">
+    <button onclick="switchTab(event, 'partnerships')"><i class="fa-solid fa-handshake"></i><span>Requests</span></button>
+    <button onclick="switchTab(event, 'hero-manager')"><i class="fa-solid fa-display"></i><span>Hero</span></button>
+    <button onclick="switchTab(event, 'portfolio-manager')"><i class="fa-solid fa-film"></i><span>Portfolio</span></button>
+    <button onclick="switchTab(event, 'board-manager')"><i class="fa-solid fa-user-tie"></i><span>Board</span></button>
+    <button onclick="switchTab(event, 'member-manager')"><i class="fa-solid fa-users"></i><span>Users</span></button>
+</div>
 </body>
 </html>

@@ -134,36 +134,50 @@ nav {
     margin-top: 5px;
 }
 
-/* --- Hero Section - RESTORED FULL HEIGHT --- */
+/* --- Final Hero Section Fix --- */
 .hero-section {
-    position: relative; 
+    position: relative;
     width: 100%;
-    height: 90vh;             /* Restored: This makes the video large again */
-    display: flex; 
-    align-items: center;      /* Vertically center */
-    justify-content: center;   /* Horizontally center */
-    text-align: center;
-    overflow: hidden;
-    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    height: 100vh;           /* Force container to 100% of the screen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;        /* Clips the parts of the video that bleed out */
+    background: #000;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 #bg-video {
     position: absolute;
     top: 50%;
     left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    z-index: -2;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
+    transform: translate(-50%, -50%); /* Keeps it perfectly centered */
+    
+    /* This is the magic part */
+    width: 100%;
+    height: 100%;           /* Forces video to match the 100vh height */
+    object-fit: cover;       /* Zooms and crops to fill every pixel of the container */
+    
+    z-index: 1;
 }
 
+/* Ensure the overlay covers the gaps too */
 .video-overlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(5, 5, 5, 0.6);
-    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
 }
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
 .admin-btn:hover { background: var(--text-main); color: var(--bg-color) !important; }
 
 .hero-content {
@@ -482,20 +496,20 @@ nav {
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* --- RESPONSIVE DESIGN FOR MOBILE --- */
+/* --- CONSOLIDATED RESPONSIVE DESIGN --- */
+
 @media (max-width: 768px) {
+    /* 1. Global Navigation Adjustments */
     nav {
-        display: flex;
-        flex-direction: column !important; /* Stack logo and links */
-        align-items: center;
+        flex-direction: column !important;
         height: auto !important;
         padding: 20px 0 !important;
-        background-color: #000; /* Ensures visibility against background */
+        background-color: #000;
     }
 
     .nav-links {
         display: flex !important;
-        flex-direction: row; /* Keep links side-by-side but wrapped */
+        flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
         gap: 15px;
@@ -506,73 +520,123 @@ nav {
     .nav-links a {
         font-size: 14px;
         padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.1); /* Adds a slight button feel */
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 5px;
-        text-decoration: none;
         color: #fff !important;
     }
 
-    /* 2. The Hero / Main Headings */
+    /* 2. Typography & Hero Section */
     h1 {
         font-size: 2.2rem !important;
         text-align: center;
     }
 
-    /* 3. The Grid (Index & Portfolio) */
-    /* Force 1 column on phones so images aren't tiny */
-    .featured-grid, .portfolio-grid {
+    .glow-text {
+        font-size: 3rem !important;
+    }
+
+    #hero-video-preview {
+        height: 30vh !important;
+        min-height: 250px !important;
+    }
+
+    /* 3. Grid & Layout (Index & Portfolio) */
+    .featured-grid, .portfolio-grid, .preview-grid {
         grid-template-columns: 1fr !important; 
         padding: 10px !important;
         gap: 25px !important;
     }
 
-    /* 4. The Cards */
-    .preview-card {
-        margin: 0 auto;
-        width: 100%;
-    }
-
     .preview-card video, .img-placeholder {
-        height: 220px !important; /* Slightly shorter for vertical scrolling */
+        height: 220px !important;
     }
 
-    /* 5. The Forms (Partnership/Contact) */
+    /* 4. Admin Dashboard Mobile Overhaul */
+    .admin-sidebar {
+        display: none !important; /* Hide desktop sidebar */
+    }
+
+    .admin-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+        padding-bottom: 100px !important; /* Space for Bottom Nav */
+    }
+
+    .admin-container {
+        padding: 10px !important;
+        width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+
+    /* 5. Responsive Data Tables */
+    .admin-card {
+        width: 100% !important;
+        overflow-x: auto !important; /* Allows horizontal swipe */
+        display: block !important;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        background: var(--surface-color);
+    }
+
+    .admin-table {
+        min-width: 700px !important; /* Prevents squashing columns */
+        font-size: 12px !important;
+    }
+
+    .admin-table th, .admin-table td {
+        white-space: nowrap !important; /* Keeps text on one line for better scrolling */
+        padding: 12px 8px !important;
+    }
+
+    /* 6. Floating Bottom Navigation Bar */
+    .mobile-admin-nav {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #111;
+        border-top: 1px solid var(--accent-gold);
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 9999;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+    }
+
+    .mobile-admin-nav button {
+        background: none;
+        border: none;
+        color: #888;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        flex: 1;
+    }
+
+    .mobile-admin-nav button i {
+        font-size: 18px;
+    }
+
+    .mobile-admin-nav button:active, 
+    .mobile-admin-nav button:focus {
+        color: var(--accent-gold);
+    }
+
+    /* 7. Forms Optimization */
     form {
         width: 95% !important;
         padding: 20px !important;
     }
 
     input, textarea, button {
-        font-size: 16px !important; /* Prevents iOS from zooming in on text boxes */
+        font-size: 16px !important; /* Stops iOS auto-zoom */
     }
 }
 
-/* Admin Panel Mobile Fixes */
-@media (max-width: 768px) {
-    /* Force the container to handle the wide table */
-    .admin-container {
-        padding: 10px !important;
-        width: 100vw !important;
-        overflow-x: hidden !important; /* Prevent the whole page from shaking */
-    }
-
-    /* Wrap the table in a scrollable box */
-    .table-wrapper {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important; /* This creates the swipe-left/right effect */
-        -webkit-overflow-scrolling: touch;
-        border: 1px solid #333;
-    }
-
-    table {
-        width: 100% !important;
-        min-width: 700px !important; /* Forces the table to stay wide so it's readable when scrolling */
-        font-size: 12px !important;
-    }
-
-    th, td {
-        white-space: nowrap !important; /* Prevents text from wrapping into ugly tall rows */
-        padding: 12px 8px !important;
-    }
+/* Hide Mobile Nav on Desktop */
+@media (min-width: 769px) {
+    .mobile-admin-nav { display: none; }
 }
