@@ -5,7 +5,7 @@ const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, push, set } = require('firebase/database');
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json()); // Allows the server to understand JSON data
 
 // 1. YOUR FIREBASE CONFIG
@@ -61,7 +61,8 @@ app.get('/', (req, res) => {
 });
 
 // 3. START THE SERVER
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-    console.log(`🚀 Node.js Server running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
