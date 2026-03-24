@@ -546,3 +546,30 @@ nav {
         font-size: 16px !important; /* Prevents iOS from zooming in on text boxes */
     }
 }
+
+/* Admin Panel Mobile Fixes */
+@media (max-width: 768px) {
+    /* 1. Make the table scrollable sideways so it doesn't squash */
+    .admin-container, .table-wrapper { 
+        overflow-x: auto;
+        display: block;
+        width: 100%;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iPhone */
+    }
+
+    table {
+        min-width: 600px; /* Forces the table to keep its shape while scrolling */
+        font-size: 13px; /* Slightly smaller text to fit more */
+    }
+
+    th, td {
+        padding: 8px 5px !important;
+    }
+
+    /* 2. Adjust the Logout/Back buttons at the top */
+    .admin-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
