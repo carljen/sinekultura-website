@@ -48,6 +48,13 @@ The system uses a serverless architecture to ensure high availability and low la
 * **Lemuel Banzuela** - Media Integration & Backend Logic
 * **Jaira Borral** - Content Strategy & Database Management
 
+## Members (Elective 4)
+* **Carl Jan B. Daulo**
+* **Andrei Asuncion**
+* **Lemuel Banzuela**
+* **Jaira Borral**
+* **Eliana Wendy DC. Cruz**
+
 ---
 *Developed for Bulacan State University - Computer Engineering Department.*
 
