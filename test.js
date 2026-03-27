@@ -4,7 +4,7 @@ const fs = require('fs');
 console.log("Running automatic tests...");
 
 // We are intentionally looking for 'missing-file.html' to force a failure
-if (fs.existsSync('./public/index.html') && fs.existsSync('./public/missing-file.html')) {
+if (fs.existsSync('./public/index.html') && fs.existsSync('./public/admin.html')) {
     console.log("✅ SUCCESS: Critical UI files are present.");
     process.exit(0); 
 } else {
