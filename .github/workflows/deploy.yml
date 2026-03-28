@@ -25,8 +25,19 @@ jobs:
       - name: 🧪 Run Automatic Tests
         run: node test.js
         
-      # 🚀 This only runs if the test above passes!
-      - name: ☁️ Deploy to Firebase
+      # 1. This ONLY runs during a Pull Request (Creates a temporary preview URL)
+      - name: ☁️ Deploy Preview (For Pull Requests)
+        if: github.event_name == 'pull_request'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: sinekultura-web-87ee8
+          # Notice we removed the channelId here so Firebase makes a temporary one!
+
+      # 2. This ONLY runs when code is pushed or merged into Main (Updates the live site)
+      - name: ☁️ Deploy Live (For Merges to Main)
+        if: github.event_name == 'push'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
