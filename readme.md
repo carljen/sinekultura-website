@@ -51,7 +51,6 @@ The system uses a serverless architecture to ensure high availability and low la
 ## Members (Elective 4)
 * **Carl Jan B. Daulo**
 * **Andrei Asuncion**
-* **Lemuel Banzuela**
 * **Jaira Borral**
 * **Eliana Wendy DC. Cruz**
 
