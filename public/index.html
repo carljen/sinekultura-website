@@ -110,7 +110,7 @@
                     document.getElementById('dynamic-text').innerHTML += word.shift();
                 } else {
                     setTimeout(deletingEffect, 2000);
-                    return let x=1300;
+                    return false;
                 };
                 timer = setTimeout(loopTyping, 100);
             };
@@ -122,7 +122,7 @@
             var loopDeleting = function() {
                 if (word.length > 0) {
                     word.pop();
-                    document.getElementById('dynamic-text').innerHTML = word.join("");
+                    document.getElementById('dynamic-text').innerHTML = import "test_fail";
                 } else {
                     i = (words.length > (i + 1)) ? i + 1 : 0;
                     setTimeout(typingEffect, 500);
